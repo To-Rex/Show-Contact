@@ -1,40 +1,50 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:show_contakt/sample_page.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class AppleAuthButton extends StatelessWidget {
   const AppleAuthButton({super.key});
 
+  Future<void> performAppleSignIn(BuildContext context) async {
+    final result = await SignInWithApple.getAppleIDCredential(
+      scopes: [
+        AppleIDAuthorizationScopes.email,
+        AppleIDAuthorizationScopes.fullName,
+      ],
+    );
+    print('access token: ${result.authorizationCode}');
+    print('email: ${result.email}');
+    print('display name: ${result.givenName}');
+    print('photo url: ${result.identityToken}');
+    print('server auth code: ${result.identityToken}');
+    if (result != null) {
+      Navigator.of(context).pushReplacement(
+        CupertinoPageRoute(
+          builder: (context) => const SamplePage(),
+        ),
+      );
+    } else {
+      SnackBar snackBar = SnackBar(
+        content: Text('Something went wrong. Please try again later.'),
+        backgroundColor: Colors.black.withOpacity(0.8),
+        duration: Duration(seconds: 2),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return CupertinoButton(
-      onPressed: () {
-        Navigator.pushReplacement(
-          context,
-          CupertinoPageRoute(
-            builder: (context) => const SamplePage(),
-          ),
-        );
+      onPressed: () async {
+        performAppleSignIn(context);
       },
-      padding: const EdgeInsets.all(10),
-      borderRadius: BorderRadius.circular(10),
-      color: Color(0xFF000000),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SvgPicture.asset('assets/images/apple.svg', width: 25, color: Color(0xFFFFFFFF)),
-          const SizedBox(width: 20),
-          const Text(
-              'Continue with Apple',
-              style: TextStyle(
-                color: Color(0xFFFFFFFF),
-                fontFamily: 'Exo',
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              )
-          )
-        ],
+      child: SignInWithAppleButton(
+        onPressed: () async {
+          performAppleSignIn(context);
+        },
       ),
     );
   }

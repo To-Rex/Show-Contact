@@ -17,6 +17,8 @@ class SamplePage extends StatefulWidget {
 
 class _SamplePageState extends State<SamplePage>
     with SingleTickerProviderStateMixin {
+
+
   Future<void> _askPermissions(String routeName) async {
     PermissionStatus permissionStatus = await _getContactPermission();
     if (permissionStatus == PermissionStatus.granted) {
@@ -52,9 +54,22 @@ class _SamplePageState extends State<SamplePage>
     }
   }
 
+  //get all user
+  Future<void> _getAllUsers() async {
+    //localhost:8080/auth/getdata1
+    final response = await http.get(
+      Uri.parse('https://show-contact-backend-production.up.railway.app/auth/getdata'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoiMjAyMy0wNy0xNlQyMToyMDo0Ny42NjQ0ODUrMDU6MDAiLCJlbWFpbCI6InRvcmV4LmFtYWtpMkBnbWFpbC5jb20iLCJwYXNzd29yZCI6IjEyMzQiLCJyb2xlcyI6InVzZXJzIn0.2GjlcrDnI4_-AMuOnv6lxT1V4I_dUg06ha_NaaxA6UU',
+      },
+    );
+    print(response.body);
+  }
   @override
   void initState() {
     super.initState();
+    _getAllUsers();
     _askPermissions('');
     getContacts();
   }

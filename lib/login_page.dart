@@ -1,10 +1,13 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:show_contakt/sample_page.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../api/oauth/googleapi.dart';
+import 'auth/apple.dart';
 import 'auth/google.dart';
 
 class LoginPage extends StatefulWidget {
@@ -15,23 +18,36 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPage extends State<LoginPage> {
-
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  Future<void> performAppleSignIn(BuildContext context) async {
+  /*Future<void> performAppleSignIn(BuildContext context) async {
     final result = await SignInWithApple.getAppleIDCredential(
       scopes: [
         AppleIDAuthorizationScopes.email,
         AppleIDAuthorizationScopes.fullName,
       ],
     );
-    print(result);
-    print(result.authorizationCode);
-    print(result.email);
-    print(result.givenName);
-    print(result.identityToken);
-  }
+    print('access token: ${result.authorizationCode}');
+    print('email: ${result.email}');
+    print('display name: ${result.givenName}');
+    print('photo url: ${result.identityToken}');
+    print('server auth code: ${result.identityToken}');
+    if (result != null) {
+      Navigator.of(context).pushReplacement(
+        CupertinoPageRoute(
+          builder: (context) => const SamplePage(),
+        ),
+      );
+    } else {
+      SnackBar snackBar = SnackBar(
+        content: Text('Something went wrong. Please try again later.'),
+        backgroundColor: Colors.black.withOpacity(0.8),
+        duration: Duration(seconds: 2),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +57,9 @@ class _LoginPage extends State<LoginPage> {
           child: SingleChildScrollView(
             child: ConstrainedBox(
                 constraints: const BoxConstraints(),
-                child:  Column(
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-
                     const Column(
                       children: [
                         Padding(
@@ -71,36 +86,32 @@ class _LoginPage extends State<LoginPage> {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                          vertical: 10.0,
-                          horizontal: 25.0
-                      ),
+                          vertical: 10.0, horizontal: 25.0),
                       child: Column(
-                        children: [SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.35,
-                        ),
+                        children: [
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.35,
+                          ),
                           GoogleAuthButton(),
                           if (Platform.isIOS)
-                            Container(
+                            /*Container(
                               margin: EdgeInsets.only(
-                                  top: MediaQuery.of(context).size.height * 0.02
-                              ),
+                                  top: MediaQuery.of(context).size.height *
+                                      0.02),
                               child: SignInWithAppleButton(
                                 onPressed: () async {
                                   performAppleSignIn(context);
-
-                                  // Now send the credential (especially `credential.authorizationCode`) to your server to create a session
-                                  // after they have been validated with Apple (see `Integration` section for more information on how to do this)
-                                },
+                                  },
                               ),
-                            ),
+                            ),*/
+                            const AppleAuthButton()
+
                         ],
                       ),
                     )
                   ],
-                )
-            ),
+                )),
           ),
-        )
-    );
+        ));
   }
 }
